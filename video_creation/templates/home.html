@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="container" style="margin-top: 100px;">
+    <div class="row">
+        <div class="mb-5">
+            <h2 class="text-center " >Convert Audio File (Opus) into Video</h2>
+            <p class="text-center">Convert Audio Files into Video With the Combinations of Images Easily</p>
+        </div>
+        <div class="main d-flex" style="justify-content: center; align-items: center;">
+            <form action="" method="post" class="card p-3 col-lg-7 col-md-7 col-sm-12" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div>
+                    <!-- <label for="" class="form-label">Enter Audio File Here</label> -->
+                    <h5 class="ms-2">Chooue An Audio File</h5>
+                    <input type="file" name="audio" id="audio" class="form-control">
+                </div>
+
+                <br>
+                <div>
+                    <!-- <label class="form-label">Select Images</label> -->
+                    <h5 class="ms-2">Chooue Multiple Images</h5>
+                    <input type="file" name="images" id="images" multiple class="form-control">
+                </div>
+
+                <br>
+                <div class="d-flex" style="justify-content: right;">
+                    <button type="submit" class="button-92">Create Video</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
