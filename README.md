@@ -10,10 +10,6 @@ This Django application is designed to create video files from audio and a colle
   
 - **Image Selection:** Users can select multiple images to be used in the video creation process.
 
-- **Video Configuration:** Users can configure video settings such as duration, frame rate, and transition effects.
-
-- **Preview:** Before generating the final video, users can preview the video with selected audio and images.
-
 - **Download:** Once satisfied with the preview, users can download the generated video.
 
 ## Requirements
