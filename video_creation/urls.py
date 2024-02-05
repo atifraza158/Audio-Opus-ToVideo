@@ -5,7 +5,7 @@ from . views import *
 
 urlpatterns = [
     path('', home_page, name='home'),
-    path('success/', success_page, name='success'),
+    path('is_loading/', get_loading, name='get_loading'),
 ]
 
 

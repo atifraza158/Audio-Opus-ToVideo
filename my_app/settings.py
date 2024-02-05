@@ -68,7 +68,8 @@ TEMPLATES = [
         },
     },
 ]
-
+# Add the following session configuration
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 WSGI_APPLICATION = 'my_app.wsgi.application'
 
 

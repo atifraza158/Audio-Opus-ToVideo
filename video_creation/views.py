@@ -1,77 +1,16 @@
 import shutil
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from PIL import Image
 import os
 import imageio
 from moviepy import editor
-# from django.core.servers.basehttp import 
 from wsgiref.util import FileWrapper
-# from django.core.wsgi import FileWrapper
 
-
-# def home_page(request):
-#     if request.method == 'POST':
-#         audio_path = 'media/uploaded_audios/'
-#         images_path = 'media/uploaded_images/'
-#         os.makedirs(audio_path, exist_ok=True)
-#         os.makedirs(images_path, exist_ok=True)
-
-#         # Getting Input Audio File
-#         audio_file = request.FILES.get('audio')
-        
-#         # Getting Input Images
-#         image_files = request.FILES.getlist('images')
-
-#         if audio_file:
-#             saved_audio_path = os.path.join(audio_path, audio_file.name)
-
-#             with open(saved_audio_path, 'wb') as destination:
-#                 for chunk in audio_file.chunks():
-#                     destination.write(chunk)
-                    
-#         for image_file in image_files:
-#             with open(os.path.join(images_path, image_file.name), 'wb') as destination:
-#                 for chunk in image_file.chunks():
-#                     destination.write(chunk)
-
-#         # Use moviepy.AudioFileClip directly for Opus support
-#         saved_audio_file = os.path.join(audio_path, audio_file.name)
-#         audio = editor.AudioFileClip(saved_audio_file)
-#         audio_length = audio.duration
-
-#         list_of_images = []
-#         for image_file in os.listdir(images_path):
-#             if image_file.endswith('.png') or image_file.endswith('.jpg'):
-#                 image_path = os.path.join(images_path, image_file)
-#                 image = Image.open(image_path).resize((1280, 720), Image.Resampling.LANCZOS)
-#                 list_of_images.append(image)
-
-#         duration = audio_length / len(list_of_images)
-#         imageio.mimsave('images.gif', list_of_images, fps=1/duration)
-
-#         # Create video from GIF and set the audio
-#         video = editor.VideoFileClip("images.gif")
-#         final_video = video.set_audio(audio).set_fps(24).resize(width=1280, height=720)
-
-#         # Save the final video to the system's download folder
-#         download_folder = os.path.expanduser("~/Downloads")  # Get the user's home directory
-#         download_path = os.path.join(download_folder, "video.mp4")
-#         final_video.write_videofile(fps=24, codec="libx264", filename=download_path)
-
-#         # Serve the video as a downloadable response
-#         with open(download_path, 'rb') as video_file:
-#             response = HttpResponse(FileWrapper(video_file), content_type='video/mp4')
-#             response['Content-Disposition'] = 'attachment; filename=video.mp4'
-#             return response
-
-#     return render(request, 'home.html')
-
-def success_page(request):
-    return render(request, 'success.html')
 
 
 def home_page(request):
+    isLoading = False
     if request.method == 'POST':
         audio_path = 'media/uploaded_audios/'
         images_path = 'media/uploaded_images/'
@@ -129,6 +68,14 @@ def home_page(request):
         download_folder = os.path.expanduser("~/Downloads")  # Get the user's home directory
         download_path = os.path.join(download_folder, "video.mp4")
         final_video.write_videofile(fps=24, codec="libx264", filename=download_path)
+        isLoading = True
+        
+        # Get the size of the video file
+        with open(download_path, 'rb') as video_file:
+            video_file.seek(0, os.SEEK_END)
+            video_file_size = video_file.tell()
+            print("Size of the video: ", video_file_size)
+        
 
         # Serve the video as a downloadable response
         with open(download_path, 'rb') as video_file:
@@ -136,5 +83,17 @@ def home_page(request):
             response['Content-Disposition'] = 'attachment; filename=video.mp4'
             shutil.rmtree(images_path)
             shutil.rmtree(audio_path)
+            request.session['isLoading'] = isLoading
             return response
-    return render(request, 'home.html')
+        
+    isLoading = False
+    context = {
+            'isLoading': isLoading,
+        }    
+    return render(request, 'home.html', context = context)
+
+
+def get_loading(request):
+    isLoading = request.session.get('isLoading', False)
+    print(isLoading)
+    return JsonResponse({'isLoading': isLoading}, safe=False)
